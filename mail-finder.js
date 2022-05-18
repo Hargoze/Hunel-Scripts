@@ -99,10 +99,28 @@ function remove_duplicates_safe(arr) {
 
 }
 
-async function create_csv(content) {
-    await fs.writeFile('result.csv', content, { flag: 'w+' }, err => {
-        console.log(err)
+function get_offer_id(data) {
+    var splited_balises = data.split("<")
+    var match = []
+
+    splited_balises.forEach(data => {
+
+        if (data.includes("1f51ab68c607242a")) {
+            data.split("-").forEach(elem => {
+                if (elem.includes("Merci"))
+                    match.push(elem)
+            })
+        }
     });
+    try {
+        return match[1].toString().slice(0, 16)
+    } catch {
+
+    }
+}
+
+async function create_csv(content) {
+    await fs.writeFile('result.csv', content, { flag: 'w+' }, err => { });
 }
 
 fs.readFile(filepath, 'utf8', (err, data) => {
@@ -112,53 +130,28 @@ fs.readFile(filepath, 'utf8', (err, data) => {
     }
     data = CSVToArray(data)
 
-    var parsed = []
     var csvContent = ""
 
     data.forEach(element => {
+        var body = element[0]
 
-        var splited_balises = element[0].split("<")
+        var offer = get_offer_id(body) //isole l'id
 
-        var match = []
-        var offer = ""
-        splited_balises.forEach(element => {
-            if (element.includes("1f51ab68c607242a")) {
-                element.split("-").forEach(elem => {
-                    if (elem.includes("Merci"))
-                        match.push(elem)
-                })
-                //match.push(element)
-            }
-        });
-        //console.log(match[1])
-        try {
-            offer = match[1].toString().slice(0, 16)
-            console.log(offer)
-        } catch {
-
-        }
-
-        var tmp = element[0].toString().match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi)
+        var tmp = body.toString().match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi) //garde que les lignes où il y a une adresse email
         if (!tmp)
             return ""
-        tmp = remove_duplicates_safe(tmp)
+        tmp = remove_duplicates_safe(tmp) //retire les duplicats dans notre liste
 
-        var result = tmp.filter(elem => {
+        var result = tmp.filter(elem => { //filtre que les mails différents de indeedmail.com et hunel.io
             var mail_origin = elem.split('@')[1]
             return mail_origin != "indeedemail.com" && mail_origin != "hunel.io";
         });
 
-        //parsed.push(result[0])
         if (result[0] && offer)
-            csvContent = csvContent.concat(result[0] + ',' + offer + '\n')
+            csvContent = csvContent.concat(result[0] + ',' + offer + '\n') //buffer du csv
     });
-    /*
 
-    parsed.forEach(elem => {
-        csvContent = csvContent.concat(elem + '\n')
-    })*/
-
-    create_csv(csvContent)
+    create_csv(csvContent) //create le fichier csv
 });
 
 
