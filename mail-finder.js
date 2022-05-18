@@ -120,19 +120,14 @@ fs.readFile(filepath, 'utf8', (err, data) => {
             return ""
         tmp = remove_duplicates_safe(tmp)
 
-
         var result = tmp.filter(elem => {
             var mail_origin = elem.split('@')[1]
-            //console.log(mail_origin)
-            //console.log(mail_origin != "indeedemail.com", mail_origin != "hunel.io")
             return mail_origin != "indeedemail.com" && mail_origin != "hunel.io";
         });
 
-        console.log(result[0])
         parsed.push(result[0])
     });
 
-    console.log(parsed)
     var csvContent = ""
 
     parsed.forEach(elem => {
