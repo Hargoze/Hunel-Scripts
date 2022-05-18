@@ -113,9 +113,32 @@ fs.readFile(filepath, 'utf8', (err, data) => {
     data = CSVToArray(data)
 
     var parsed = []
+    var csvContent = ""
 
     data.forEach(element => {
-        var tmp = element.toString().match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi)
+
+        var splited_balises = element[0].split("<")
+
+        var match = []
+        var offer = ""
+        splited_balises.forEach(element => {
+            if (element.includes("1f51ab68c607242a")) {
+                element.split("-").forEach(elem => {
+                    if (elem.includes("Merci"))
+                        match.push(elem)
+                })
+                //match.push(element)
+            }
+        });
+        //console.log(match[1])
+        try {
+            offer = match[1].toString().slice(0, 16)
+            console.log(offer)
+        } catch {
+
+        }
+
+        var tmp = element[0].toString().match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi)
         if (!tmp)
             return ""
         tmp = remove_duplicates_safe(tmp)
@@ -125,14 +148,15 @@ fs.readFile(filepath, 'utf8', (err, data) => {
             return mail_origin != "indeedemail.com" && mail_origin != "hunel.io";
         });
 
-        parsed.push(result[0])
+        //parsed.push(result[0])
+        if (result[0] && offer)
+            csvContent = csvContent.concat(result[0] + ',' + offer + '\n')
     });
-
-    var csvContent = ""
+    /*
 
     parsed.forEach(elem => {
         csvContent = csvContent.concat(elem + '\n')
-    })
+    })*/
 
     create_csv(csvContent)
 });
