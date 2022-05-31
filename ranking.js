@@ -8,8 +8,10 @@ var rank = [18, 16, 15, 13, 11, 9, 7, 5, 4, 2]
 
 var ranking = []
 
-function evaluate(data) {
+var nb_review = 0
 
+function evaluate(data) {
+    nb_review += 1
     data.forEach(function (elem, i) {
         if (!ranking.find(element => element.soft_skill === elem)) {
             ranking.push({
@@ -57,4 +59,27 @@ ranking.sort(function (first, second) {
 
     
 })
+
 console.log(ranking)
+console.log("\n\n")
+ranking.splice(ranking.length - (ranking.length - 10))
+
+var sum_average = 0
+ranking.forEach((elem) => {
+    elem.score /= nb_review
+    sum_average += elem.score
+})
+
+console.log(ranking)
+console.log(sum_average)
+console.log("\n\n")
+
+var total2 = 0
+ranking.forEach((elem) => {
+    elem.score = (elem.score * 100) / sum_average
+    elem.score = parseFloat(elem.score.toFixed(2))
+    total2 += elem.score
+})
+
+console.log(ranking)
+console.log(total2)
