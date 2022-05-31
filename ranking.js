@@ -38,48 +38,36 @@ ranking.sort(function (first, second) {
 });
 */
 
-ranking.sort(function (first, second) {
+ranking.sort(function (first, second) { //sort the skills by rank
     if (first.score != second.score)
         return second.score - first.score;
     if (first.values.length != second.values.length)
         return second.values.length - first.values.length
-    const avg1 = first.values.reduce((partialSum, a) => partialSum + a, 0) / first.value.length;
-    const avg2 = second.values.reduce((partialSum, a) => partialSum + a, 0) / second.value.length;
-    
-    const sum1 = 0
-    const sum2 = 0
-
-    first.value.forEach((elem) => {
-        sum1 += Math.abs(avg1 - elem) * Math.abs(avg1 - elem)
-    })
-
-    second.value.forEach((elem) => {
-        sum2 += Math.abs(avg2 - elem) * Math.abs(avg2 - elem)
-    })
-
-    
 })
 
+console.log("==== SUM OF SCORES ====")
 console.log(ranking)
-console.log("\n\n")
-ranking.splice(ranking.length - (ranking.length - 10))
+console.log("\n")
+ranking.splice(ranking.length - (ranking.length - 10)) //keeping the 10 first skills
 
 var sum_average = 0
-ranking.forEach((elem) => {
+ranking.forEach((elem) => { //calculate average of 10 first skills
     elem.score /= nb_review
     sum_average += elem.score
 })
 
+console.log("==== AVERAGES ====")
 console.log(ranking)
-console.log(sum_average)
-console.log("\n\n")
+//console.log(sum_average)
+console.log("\n")
 
 var total2 = 0
-ranking.forEach((elem) => {
+
+console.log("==== PERCENTAGE OF AVERAGES ====")
+ranking.forEach((elem) => { //turn average score into percentage
     elem.score = (elem.score * 100) / sum_average
     elem.score = parseFloat(elem.score.toFixed(2))
     total2 += elem.score
 })
 
 console.log(ranking)
-console.log(total2)
