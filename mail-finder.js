@@ -99,22 +99,59 @@ function remove_duplicates_safe(arr) {
 
 }
 
+function get_offer_name(data) {
+    var splited_balises = data.split("<")
+    var match = []
+
+    splited_balises.forEach(data => {
+        if (data.includes("subject")) {
+            //data = decodeURI(data)
+            data = decodeURIComponent(data)
+            data.split("-").forEach(elem => {
+                /*
+                if (elem.includes("Merci") && elem.endsWith('tyle="text') && !elem.startsWith('vous')) //isole ID
+                    match.push(elem)
+                */
+                if (elem.includes("votre candidature pour le poste suivant") && elem.includes("&amp")) {
+                    //console.log(elem)
+
+                    var SubString = elem.substring(
+                        elem.indexOf("votre candidature pour le poste suivant") + ("votre candidature pour le poste suivant").length + 3,
+                        elem.indexOf("&")
+                    );
+                    match = SubString
+                    return
+                    //console.log(elem.indexOf(":") + 1, elem.indexOf("&amp"))
+                }
+            })
+        }
+    });
+    try {
+        return match
+    } catch {
+        return ""
+    }
+}
+
 function get_offer_id(data) {
     var splited_balises = data.split("<")
     var match = []
 
     splited_balises.forEach(data => {
         if (data.includes("subject")) {
+            //data = decodeURI(data)
+            data = decodeURIComponent(data)
             data.split("-").forEach(elem => {
-                if (elem.includes("Merci") && elem.endsWith('tyle="text') && !elem.startsWith('vous'))
+
+                if (elem.includes("Merci") && elem.endsWith('tyle="text') && !elem.startsWith('vous')) //isole ID
                     match.push(elem)
             })
         }
     });
     try {
-        return match[0].toString().slice(0, 16)
+        return  match[1].toString().slice(0, 16);
     } catch {
-
+        return ""
     }
 }
 
@@ -134,8 +171,9 @@ fs.readFile(filepath, 'utf8', (err, data) => {
     data.forEach(element => {
         var body = element[0]
 
-        var offer = get_offer_id(body) //isole l'id
-        console.log(offer)
+        var offer = get_offer_name(body) //isole le nom de l'offre
+        var id = get_offer_id(body) //isole l'id
+        //console.log(offer)
 
         var tmp = body.toString().match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi) //garde que les lignes où il y a une adresse email
         if (!tmp)
@@ -148,7 +186,7 @@ fs.readFile(filepath, 'utf8', (err, data) => {
         });
 
         if (result[0] && offer)
-            csvContent = csvContent.concat(result[0] + ',' + offer + '\n') //buffer du csv
+            csvContent = csvContent.concat(result[0] + ',' + offer + ',' + id + '\n') //buffer du csv
     });
 
     create_csv(csvContent) //create le fichier csv
