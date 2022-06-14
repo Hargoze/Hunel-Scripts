@@ -104,16 +104,15 @@ function get_offer_id(data) {
     var match = []
 
     splited_balises.forEach(data => {
-
-        if (data.includes("1f51ab68c607242a")) {
+        if (data.includes("subject")) {
             data.split("-").forEach(elem => {
-                if (elem.includes("Merci"))
+                if (elem.includes("Merci") && elem.endsWith('tyle="text') && !elem.startsWith('vous'))
                     match.push(elem)
             })
         }
     });
     try {
-        return match[1].toString().slice(0, 16)
+        return match[0].toString().slice(0, 16)
     } catch {
 
     }
@@ -136,6 +135,7 @@ fs.readFile(filepath, 'utf8', (err, data) => {
         var body = element[0]
 
         var offer = get_offer_id(body) //isole l'id
+        console.log(offer)
 
         var tmp = body.toString().match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi) //garde que les lignes où il y a une adresse email
         if (!tmp)
