@@ -20,7 +20,6 @@ function get_offer_name(data) {
     }
 }
 
-
 function get_offer_id(data) {
     var splited_balises = data.split("<")
     var match = []
@@ -61,6 +60,7 @@ var decoded = Buffer.from(inputData.data, 'base64').toString()
 var offer_id = get_offer_id(decoded);
 var offer = get_offer_name(decoded)
 var emails = decoded.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi)
+var phones = decoded.match(/((?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})/gi)
 var tmp = remove_duplicates_safe(emails)
 var result = []
 
@@ -69,6 +69,7 @@ tmp.forEach(elem => {
         result.push(elem)
 })
 
-var result_email = result[0]
+var result_email = (result ? result[0] : null)
+var phone_number = (phones ? phones[0] : null)
 
-output = [{offer_id, offer, result_email}];
+output = [{offer_id, offer, result_email, phone_number}];
